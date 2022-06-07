@@ -28,11 +28,22 @@ const makeid = (length) => {
   }
   return result.join("");
 };
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_HOST,
-  process.env.NEXT_PUBLIC_SUPABASE_KEY
+const curve = new THREE.CubicBezierCurve3(
+	new THREE.Vector3( -10, 0, 0 ),
+	new THREE.Vector3( -5, 15, 0 ),
+	new THREE.Vector3( 20, 15, 0 ),
+	new THREE.Vector3( 10, 0, 0 )
 );
+
+const points = curve.getPoints( 50 );
+const geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+
+// Create the final object to add to the scene
+const curveObject = new THREE.Line( geometry, material );
 
 const Home = () => {
   const [globeFile, setGlobeFile] = React.useState(null);
@@ -67,7 +78,6 @@ const Home = () => {
       </Head>
 
       <main className="" {...getRootProps()}>
-        <div className="relative bg-white overflow-hidden min-h-screen">
           <nav className="bg-white">
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
               <div className="border-b border-gray-100">
@@ -115,52 +125,33 @@ const Home = () => {
                 <div className="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
                   <div>
                     <h1 className="mt-4 text-4xl tracking-tight font-extrabold text-black sm:mt-5 sm:leading-none lg:mt-6 lg:text-5xl xl:text-6xl">
-                      <span className="md:block">Convert your design to</span>{" "}
                       <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500 md:block">
-                        3D Globe
                       </span>
                     </h1>
                     <p className="mt-3 text-base text-gray-900 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                      Create an Interactive 3D globe based on your flat world
-                      map design. Try the figma plugin or upload an image to see
-                      it live in action.
+                      
                     </p>
                     <p className="mt-8 text-sm text-white uppercase tracking-wide font-semibold sm:mt-10 lg:justify-start md:justify-center flex flex-wrap">
                       <a
-                        href="https://www.figma.com/community/plugin/977567760148608604/Globe-3D"
-                        className="mr-5 inline-flex items-center px-6 py-3 border bg-gradient-to-r from-blue-300 to-blue-500 hover:from-pink-500 hover:to-orange-500 text-white font-semibold rounded-md transition dutation-150 ease-in-out transform hover:scale-105"
                       >
-                        <CloudDownloadIcon className="h-5 w-5 text-white mr-2" />
-                        Figma Plugin
                       </a>
                       <a
-                        href="https://github.com/sonnylazuardi/globe-3d"
-                        className="mr-5 inline-flex items-center px-6 py-3 border text-blue-500 font-semibold rounded-md transition dutation-150 ease-in-out transform hover:scale-105"
                       >
-                        <CodeIcon className="h-5 w-5 text-blue-500 mr-2" />
-                        Github
                       </a>
                     </p>
                     <div className="py-6">
                       <p className="text-xs cursor-pointer hover:underline leading-5 text-gray-500">
-                        This project is free and open source and built for fun.
                       </p>
                       <p className="text-xs leading-5 text-gray-500">
-                        Support the creator by giving star on github and a
-                        follow on twitter.
+                        
                       </p>
-                    </div>
-                  </div>
                 </div>
                 <div className="mt-16 sm:mt-24 lg:mt-0 lg:col-span-5 mx-auto px-5 relative">
-                  <div className="absolute left-0 top-72 flex z-50">
-                    <div className="py-8 px-8 rounded-xl bg-white border border-gray-100 shadow-xl bg-opacity-25 flex flex-col">
                       <button
                         onClick={() => {
                           inputRef?.current.click();
                         }}
                         type="button"
-                        className="inline-flex justify-center items-center px-6 py-3 border text-blue-500 font-semibold rounded-md transition dutation-150 ease-in-out transform hover:scale-105 bg-white mb-2"
                       >
                         <input
                           ref={inputRef}
@@ -168,8 +159,6 @@ const Home = () => {
                           type="file"
                           className="hidden"
                         />
-                        <CloudUploadIcon className="h-5 w-5 text-blue-500 mr-2" />
-                        Upload or Drag & Drop Image
                       </button>
 
                       {globeFile ? (
@@ -191,8 +180,6 @@ const Home = () => {
                             type="button"
                             className="inline-flex justify-center items-center px-6 py-3 border text-blue-500 font-semibold rounded-md transition dutation-150 ease-in-out transform hover:scale-105 bg-white mb-2"
                           >
-                            <CloudDownloadIcon className="h-5 w-5 text-blue-500 mr-2" />
-                            Download Image
                           </button>
                           <button
                             onClick={async () => {
@@ -216,8 +203,6 @@ const Home = () => {
                             type="button"
                             className="inline-flex justify-center items-center px-6 py-3 border text-blue-500 font-semibold rounded-md transition dutation-150 ease-in-out transform hover:scale-105 bg-white mb-2"
                           >
-                            <ShareIcon className="h-5 w-5 text-blue-500 mr-2" />
-                            Share Globe
                           </button>
                         </>
                       ) : null}
@@ -226,8 +211,8 @@ const Home = () => {
                   <Globe
                     //@ts-ignore
                     ref={globeRef}
-                    width={480}
-                    height={480}
+                    width={800}
+                    height={800}
                     backgroundColor={"rgba(0,0,0,0)"}
                     globeImageUrl={imageUrl}
                     arcColor={"color"}
@@ -243,49 +228,36 @@ const Home = () => {
             </div>
             <div className="mt-24">
               <h2 className="text-gray-700 text-center text-3xl font-bold">
-                Quick Figma Plugin Demo
               </h2>
               <div className="pt-10">
                 <div
                   style={{ width: 580, maxWidth: "100%" }}
                   className="mx-auto p-4"
                 >
-                  <TweetEmbed
-                    id="1395404831116849160"
-                    options={{
-                      theme: "light",
-                      conversation: "none",
-                      width: 580,
-                    }}
-                  />
+                  
+                  
                 </div>
               </div>
             </div>
             <div className="mt-24">
               <h2 className="text-gray-700 text-center text-3xl font-bold">
-                How is it possible?
               </h2>
               <div className="p-4 text-center">
-                This project is powered by React Globe GL
               </div>
               <div className="">
                 <div
                   style={{ width: 580, maxWidth: "100%" }}
                   className="mx-auto p-4"
                 >
-                  <TweetEmbed
-                    id="1396007498134417410"
-                    options={{
-                      theme: "light",
-                      conversation: "none",
-                      width: 580,
-                    }}
-                  />
+                  
+
+
+                  
                 </div>
               </div>
             </div>
           </main>
-          <footer className="bg-gradient-to-r from-blue-300 to-blue-500">
+          <body className="bg-gradient-to-r from-black to-black ...">
             <div className="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
               <nav
                 className="-mx-5 -my-2 flex flex-wrap justify-center"
@@ -317,15 +289,12 @@ const Home = () => {
                 </div>
               </nav>
               <p className="mt-8 text-center text-base text-white">
-                © 2021 Sonny Lazuardi. All rights reserved.
               </p>
             </div>
-          </footer>
-        </div>
+          </body>
         {isDragActive ? (
           <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center ">
             <p className="text-3xl text-white text-center font-bold">
-              Drop the file here ...
             </p>
           </div>
         ) : null}
