@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import * as React from "react";
 import Head from "next/head";
 import TweetEmbed from "react-tweet-embed";
@@ -15,7 +16,6 @@ if (typeof window !== "undefined") Globe = require("react-globe.gl").default;
 
 import { createClient } from "@supabase/supabase-js";
 import toast, { Toaster } from "react-hot-toast";
-
 const makeid = (length) => {
   var result = [];
   var characters =
